@@ -15,9 +15,9 @@ func sha_sum(c *gin.Context) {
 
 func headers(c *gin.Context) {
 
-	for name, headers := range c.{
+	for name, headers := range c.Request.Header {
 		for _, h := range headers {
-			fmt.Fprintf(w, "%v: %v\n", name, h)
+			fmt.Fprintf(c.Writer, "%v: %v\n", name, h)
 		}
 	}
 }
@@ -26,6 +26,5 @@ func main() {
 	router := gin.Default()
 	router.GET("/", sha_sum)
 	router.GET("/headers", headers)
-
 	router.Run("localhost:8090")
 }
