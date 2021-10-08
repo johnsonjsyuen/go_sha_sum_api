@@ -3,24 +3,15 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 )
-
-func GetPathInt64(c *gin.Context, name string) (int64, error) {
-	val := c.Params.ByName(name)
-	if val == "" {
-		return 0, errors.New(name + " path parameter value is empty or not specified")
-	}
-	i, err := strconv.Atoi(val)
-	return int64(i), err
-}
 
 func shaSumStr(fileName string, startByte int64, endByte int64) string {
 	h := sha256.New()
@@ -31,7 +22,12 @@ func shaSumStr(fileName string, startByte int64, endByte int64) string {
 	if err != nil {
 		return "file not found"
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal("Error closing file")
+		}
+	}(f)
 
 	bytesToIterate := endByte - startByte
 	if stat.Size() < bytesToIterate {
@@ -84,5 +80,9 @@ func main() {
 	router := gin.Default()
 	router.GET("/", shaSumHandler)
 	router.GET("/headers", headers)
-	router.Run("0.0.0.0:8090")
+	address := "0.0.0.0:8090"
+	err := router.Run(address)
+	if err != nil {
+		log.Fatal(strings.Join([]string{"Problem starting server at ", "0.0.0.0:8090"}, ""))
+	}
 }
