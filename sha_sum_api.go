@@ -49,8 +49,6 @@ func shaSumStr(fileName string, startByte int64, endByte int64) string {
 	for i = 0; i < bytesToIterate; i++ {
 		_, err := f.Read(buf)
 		h.Write(buf)
-		ret := hex.EncodeToString(h.Sum(nil))
-		println(ret)
 		if err == io.EOF {
 			break
 		}
@@ -77,7 +75,7 @@ func headers(c *gin.Context) {
 
 	for name, headers := range c.Request.Header {
 		for _, h := range headers {
-			fmt.Fprintf(c.Writer, "%v: %v\n", name, h)
+			_, _ = fmt.Fprintf(c.Writer, "%v: %v\n", name, h)
 		}
 	}
 }
