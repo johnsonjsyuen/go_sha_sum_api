@@ -63,8 +63,10 @@ func batchShaSum(fileName string, partSize int64) ([]string, error) {
 
 	remainder := fileSize % partSize
 	lastHashStart := (fileSize/partSize)*partSize + 1
-	buf = make([]byte, remainder)
+	buf = make([]byte, remainder-1)
 	f.Seek(lastHashStart, 0)
+	println(lastHashStart)
+	println(remainder - 1)
 	_, _ = f.Read(buf)
 	h := sha256.New()
 	h.Write(buf)

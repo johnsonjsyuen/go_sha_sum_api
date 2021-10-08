@@ -24,11 +24,11 @@ func shaSumStr(fileName string, startByte int64, endByte int64) string {
 		}
 	}(f)
 
-	bytesToRead := endByte - startByte
-	if stat.Size() < (bytesToRead+startByte)-1 {
-		bytesToRead = stat.Size()
+	if stat.Size() < (endByte + startByte) {
+		endByte = stat.Size()
 		println("too big, adjusting")
 	}
+	bytesToRead := endByte - startByte
 
 	_, err = f.Seek(startByte, 0)
 	if err != nil {
