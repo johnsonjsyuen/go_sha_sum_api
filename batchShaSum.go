@@ -17,6 +17,10 @@ func batchShaSum(fileName string, partSize int64) ([]string, error) {
 	stat, _ := f.Stat()
 	fileSize := stat.Size()
 
+	if partSize >= fileSize {
+		return []string{shaSumStr(fileName, 0, fileSize)}, nil
+	}
+
 	iterations := fileSize / partSize
 	if fileSize%partSize != 0 {
 		iterations++
