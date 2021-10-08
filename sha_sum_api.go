@@ -84,5 +84,5 @@ func main() {
 	router := gin.Default()
 	router.GET("/", shaSumHandler)
 	router.GET("/headers", headers)
-	router.Run("localhost:8090")
+	router.Run("0.0.0.0:8090")
 }
