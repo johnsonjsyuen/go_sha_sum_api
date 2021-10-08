@@ -17,7 +17,7 @@ func batchShaSumHandler(c *gin.Context) {
 	partSize64 := int64(partSize)
 	hashes, err := batchShaSum(filename, partSize64)
 	if err != nil {
-		c.IndentedJSON(http.StatusExpectationFailed, "Calculation error")
+		c.IndentedJSON(http.StatusExpectationFailed, err)
 	}
 	c.IndentedJSON(http.StatusOK, hashes)
 }

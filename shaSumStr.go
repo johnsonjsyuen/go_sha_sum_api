@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"io"
 	"log"
 	"os"
 	"strings"
@@ -25,25 +24,19 @@ func shaSumStr(fileName string, startByte int64, endByte int64) string {
 		}
 	}(f)
 
-	bytesToIterate := endByte - startByte
-	if stat.Size() < bytesToIterate {
-		bytesToIterate = stat.Size()
+	bytesToRead := endByte - startByte
+	if stat.Size() < (bytesToRead+startByte)-1 {
+		bytesToRead = stat.Size()
+		println("too big, adjusting")
 	}
 
 	_, err = f.Seek(startByte, 0)
 	if err != nil {
 		return "file cannot be seeked there"
 	}
-	var bufSize int64 = 1
-	buf := make([]byte, bufSize)
+	buf := make([]byte, bytesToRead)
+	_, err = f.Read(buf)
+	h.Write(buf)
 
-	var i int64 = 0
-	for i = 0; i < bytesToIterate; i++ {
-		_, err := f.Read(buf)
-		h.Write(buf)
-		if err == io.EOF {
-			break
-		}
-	}
 	return hex.EncodeToString(h.Sum(nil))
 }
